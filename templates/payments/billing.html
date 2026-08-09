@@ -1,0 +1,29 @@
+{% extends 'base_dashboard.html' %}
+{% block title %}Billing{% endblock %}
+{% block page_title %}Billing &amp; Subscription{% endblock %}
+{% block page_subtitle %}You are currently on the {{ current_plan|title }} plan.{% endblock %}
+{% block content %}
+<div class="row g-4">
+  {% for key, price in plans.items %}
+  <div class="col-md-6 col-lg-3">
+    <div class="glass-card pricing-card h-100 {% if key == current_plan %}highlight{% endif %}">
+      {% if key == current_plan %}<div class="pricing-badge">CURRENT PLAN</div>{% endif %}
+      <h6 class="text-muted-soft text-uppercase mb-2" style="font-size:.78rem;">{{ key|title }}</h6>
+      <div class="price-amount mb-4">${{ price }}<span class="fs-6 text-muted-soft">/mo</span></div>
+      <form method="post" action="{% url 'payments:change_plan' key %}">
+        {% csrf_token %}
+        <button type="submit" class="btn {% if key == current_plan %}btn-outline-glass{% else %}btn-gradient{% endif %} w-100" {% if key == current_plan %}disabled{% endif %}>
+          {% if key == current_plan %}Current Plan{% else %}Switch to {{ key|title }}{% endif %}
+        </button>
+      </form>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="glass-card p-4 mt-4">
+  <h6 class="mb-2"><i class="bi bi-receipt me-2"></i>Need your transaction history?</h6>
+  <p class="text-muted-soft small mb-3">All plan changes and credit purchases are logged automatically.</p>
+  <a href="{% url 'payments:transactions' %}" class="btn btn-outline-glass btn-sm">View Transactions</a>
+</div>
+{% endblock %}

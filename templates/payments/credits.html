@@ -1,0 +1,34 @@
+{% extends 'base_dashboard.html' %}
+{% block title %}Credits{% endblock %}
+{% block page_title %}Credits{% endblock %}
+{% block page_subtitle %}You currently have {{ user.credits }} credits.{% endblock %}
+{% block content %}
+<div class="row g-4">
+  {% for package in packages %}
+  <div class="col-md-6 col-lg-3">
+    <div class="glass-card pricing-card h-100 {% if package.is_popular %}highlight{% endif %}">
+      {% if package.is_popular %}<div class="pricing-badge">BEST VALUE</div>{% endif %}
+      <h6 class="text-muted-soft text-uppercase mb-2" style="font-size:.78rem;">{{ package.name }}</h6>
+      <div class="price-amount mb-1">{{ package.credits }}<span class="fs-6 text-muted-soft"> credits</span></div>
+      <div class="text-muted-soft small mb-4">${{ package.price }}</div>
+      <form method="post" action="{% url 'payments:purchase_credits' package.name %}">
+        {% csrf_token %}
+        <button type="submit" class="btn {% if package.is_popular %}btn-gradient{% else %}btn-outline-glass{% endif %} w-100">
+          Purchase
+        </button>
+      </form>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="glass-card p-4 mt-4">
+  <h6 class="mb-2"><i class="bi bi-info-circle me-2"></i>How credits work</h6>
+  <p class="text-muted-soft small mb-0">
+    Credits are consumed based on your selected stream quality (Low, Medium,
+    High, Ultra) for every minute you're live. Purchases here are simulated
+    for testing — connect a real payment gateway in <code>payments/views.py</code>
+    when you're ready to accept live payments.
+  </p>
+</div>
+{% endblock %}
